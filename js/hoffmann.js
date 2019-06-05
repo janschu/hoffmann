@@ -13,6 +13,12 @@ var standorteJSON = {
 		]
 	};
 	
+function adjustMap(position) {	
+	var lat = position.coords.longitude;
+	var lon = position.coords.latitude;	
+	hoffmannMap.setView([lon, lat],10, );
+}
+	
 // Render Funktionen
 // Steuern des Pop-Ups
 function hoffmannStandortePopUp(feature, layer) {
@@ -33,10 +39,20 @@ function styleMarker(feature) {
 		case 'Hauptsitz':   return {color: "#ff0000",bubblingMouseEvents:true};
 	}
 }
+function resetMap () {
+	navigator.geolocation.getCurrentPosition(adjustMap);
+}
 
 function initMap(event){
 	hoffmannMap = L.map('HoffmannMap');
 	hoffmannMap.setView([53.04229, 8.6335013],10, );
+	hoffmannMap.on('contextmenu', resetMap);
+	
+
+	function rightClick() {
+      	 //map click event object (e) has latlng property which is a location at which the click occured.
+        
+      }
 
 	var topPlusLayer = L.tileLayer.wms('http://sgx.geodatenzentrum.de/wms_topplus_open?', {format: 'image/png', layers: 'web', attribution: '&copy; <a href="http://www.bkg.bund.de">Bundesamt f&uuml;r Kartographie und Geod&auml;sie 2019</a>, <a href=" http://sg.geodatenzentrum.de/web_public/Datenquellen_TopPlus_Open.pdf">Datenquellen</a>'});
 	var osmLayer = L.tileLayer.wms('http://maps.heigit.org/osm-wms/service?', {format: 'image/png', layers: 'osm_auto:all', attribution:'&copy; <a href="www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
@@ -58,27 +74,19 @@ function initMap(event){
 		"Standorte": standorteJSONLayer
 	};
 	
-	// Erzeugen und Hinzufügen des Layer Controls
+	// Erzeugen und HinzufÃ¼gen des Layer Controls
 	layerControl = L.control.layers(baseLayers, overlayLayers);
 	layerControl.addTo(hoffmannMap)
 	
-	// Erzeugen und Hinzufügen des Scale Controls
+	// Erzeugen und HinzufÃ¼gen des Scale Controls
 	scaleControl = L.control.scale({maxWidth:200, metric:true, imperial:false});
 	scaleControl.setPosition('bottomleft');
 	scaleControl.addTo(hoffmannMap);
 	
-	// Ergänzen der Attribution
+	// ErgÃ¤nzen der Attribution
 	attributionControl = hoffmannMap.attributionControl;
 	attributionControl.addAttribution("und die BO");
 
-}
-
-function adjustMap(position) {
-	
-	var lat = position.coords.longitude;
-	var lon = position.coords.latitude;
-	
-	hoffmannMap.setView([lon, lat],10, );
 }
 
 document.addEventListener('DOMContentLoaded', initMap);
